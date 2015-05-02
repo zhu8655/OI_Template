@@ -1,0 +1,1 @@
+inline int gcd(int a,int b){for(int c=a%b;c!=0;c=a%b){a = b;b = c;}return b;}
