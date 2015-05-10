@@ -1,28 +1,30 @@
-/*=====Template_Heap=====*/
 struct heap{
-	#define hMAXN 10010
-	int hCnt, a[hMAXN], idx[hMAXN][2];
-	inline void clear(){hCnt = 0;}
-	inline void swp(int p, int q){a[q] = a[p]; idx[q][0] = idx[p][0];}
-	inline void maintain(int p){idx[idx[p][0]][1] = p;}
-	void swim(int p){
-		int tmp[] = {a[p], idx[p][0]};
-		for (int q = p >> 1; q > 0; p = q, q >>= 1){
-			if (a[q] > tmp[0]){
-				swp(q, p); maintain(p);
-			} else break;
-		} a[p] = tmp[0]; idx[p][0] = tmp[1]; maintain(p);
+	int hCnt, a[MAXN], idx[MAXN][2];
+	inline void clear() {hCnt = 0;}
+	inline void swp(int U, int V) {a[U] = a[V]; idx[U][0] = idx[V][0];}
+	void swim(int U) {
+		int tmp[] = {a[U], idx[U][0]};
+		for (int V = U>>1; V; U = V, V >= 1) {
+			if (a[V] > tmp[0]) {
+				swp(V, U);
+				idx[idx[U][0]][1] = U;
+			}
+			else break;
+		}
+		a[U] = tmp[0]; idx[U][0] = tmp[1]; idx[idx[U][0]][1] = U;
 	}
-	void sink(int p){
-		int tmp[] = {a[p], idx[p][0]};
-		for (int q = p << 1; q <= hCnt; p = q, q <<= 1){
-			if (q < hCnt && a[q] > a[q+1]) q++;
-			if (a[q] < tmp[0]){
-				swp(q, p); maintain(p);
-			} else break;
-		} a[p] = tmp[0]; idx[p][0] = tmp[1]; maintain(p);
+	void sink(int U) {
+		int tmp[] = {a[U], idx[U][0]};
+		for (int V = U<<1; V <= hCnt; U = V, V <<= 1) {
+			if (V < hCnt && a[V] > a[V+1]) V++;
+			if (a[V] < tmp[0]) {
+				swp(V, U);
+				idx[idx[U][0]][1] = U;
+			}
+			else break;
+		}
+		a[U] = tmp[0]; idx[U][0] = tmp[1]; idx[idx[U][0]][1] = U;
 	}
-	void push(int x){a[++hCnt] = x; swim(hCnt);}
-	void push(int x, int p){a[++hCnt] = x; idx[hCnt][0] = p; swim(hCnt);}
-	int pop(int p){int ret = a[p]; swp(hCnt, p); a[hCnt] = idx[hCnt][0] = 0; hCnt--; swim(p); sink(p); return ret;}
+	void push(int X) {a[++hCnt] = X; swim(hCnt);}
+	int pop() {int ret = a[1]; swp(1, hCnt--); sink(1); return ret;}
 } h;
